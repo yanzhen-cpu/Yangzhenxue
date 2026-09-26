@@ -2,7 +2,7 @@
 
 这是策略0.6.2的公开招聘展示版。项目覆盖策略形式化、历史数据治理、日频事件驱动回测、组合风险控制、逐笔审计和结果呈现。
 
-[在线项目页](https://yanzhen-cpu.github.io/Yangzhenxue/) · [招聘版PDF](reports/STRAT-026-v0.6.2-project-brief.pdf) · [公开代码节选](src/strategy_pipeline.py)
+[在线项目页](https://yanzhen-cpu.github.io/Yangzhenxue/) · [网页阅读代码](https://yanzhen-cpu.github.io/Yangzhenxue/code.html) · [GitHub源码节选](src/strategy_pipeline.py) · [招聘版PDF](reports/STRAT-026-v0.6.2-project-brief.pdf)
 
 ## 核心结果
 
@@ -30,6 +30,8 @@
 ## 阅读边界
 
 这是研究型历史回测，不是实盘业绩或投资建议。主结果采用零手续费、零滑点和日频阈值成交口径；开盘批次权益为近似值，部分交割锚采用经确认的研究口径。公开仓库展示系统结构、关键不变式和审计证据，不提供私人数据库或完整专有参数组合。
+
+分年度数字为按平仓年度归属的已实现盈亏。2026年截至8月7日共有3笔交易，均在成本价退出，因此已实现盈亏为0；持仓期间日终权益在2743.53万至6276.41万元之间波动。
 
 ## 目录
 
