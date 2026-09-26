@@ -1,0 +1,134 @@
+{
+  "strategy": "STRAT-032",
+  "version": "0.7.6",
+  "source_run": "STRAT032-FULL-MAIN-20260926",
+  "period": {
+    "start": "2019-01-02",
+    "end": "2026-09-24"
+  },
+  "initial_capital": 1000000.0,
+  "ending_equity": 51703306.699999996,
+  "total_return": 50.7033067,
+  "annualized_return": 0.6664020437167482,
+  "max_drawdown": 0.4620072619827257,
+  "max_closed_drawdown": 0.298600429110388,
+  "sharpe": 1.66352738312581,
+  "closed_trades": 55,
+  "open_at_end": 0,
+  "win_rate": 0.4727272727272727,
+  "pnl_ratio": 4.6618384402254245,
+  "max_portfolio_risk": 0.6672625264077926,
+  "universe_products": 34,
+  "fixed_excluded_products": [
+    "LC",
+    "PD",
+    "PS",
+    "PT",
+    "SI",
+    "MA",
+    "SH",
+    "UR",
+    "AG"
+  ],
+  "rollovers_filled": 10,
+  "annual_account_change": {
+    "2019": {
+      "end_date": "2019-12-31",
+      "start_equity": 1000000.0,
+      "end_equity": 979854.0,
+      "change": -20146.0,
+      "return": -0.020145999999999997
+    },
+    "2020": {
+      "end_date": "2020-12-31",
+      "start_equity": 979854.0,
+      "end_equity": 1435280.396,
+      "change": 455426.39599999995,
+      "return": 0.4647900564778018
+    },
+    "2021": {
+      "end_date": "2021-12-31",
+      "start_equity": 1435280.396,
+      "end_equity": 2318117.596,
+      "change": 882837.2,
+      "return": 0.6150973722349928
+    },
+    "2022": {
+      "end_date": "2022-12-30",
+      "start_equity": 2318117.596,
+      "end_equity": 5342821.596000003,
+      "change": 3024704.000000003,
+      "return": 1.3048104225683996
+    },
+    "2023": {
+      "end_date": "2023-12-29",
+      "start_equity": 5342821.596000003,
+      "end_equity": 9990044.372000003,
+      "change": 4647222.776000001,
+      "return": 0.8698068412913553
+    },
+    "2024": {
+      "end_date": "2024-12-31",
+      "start_equity": 9990044.372000003,
+      "end_equity": 27018466.372,
+      "change": 17028422.0,
+      "return": 1.704539175794563
+    },
+    "2025": {
+      "end_date": "2025-12-31",
+      "start_equity": 27018466.372,
+      "end_equity": 45535678.9,
+      "change": 18517212.527999997,
+      "return": 0.6853539454478403
+    },
+    "2026": {
+      "end_date": "2026-09-24",
+      "start_equity": 45535678.9,
+      "end_equity": 51703306.699999996,
+      "change": 6167627.799999997,
+      "return": 0.1354460490979963
+    }
+  },
+  "completed_cycle_pnl_by_exit_year": {
+    "2019": -20145.99999999998,
+    "2020": 455426.39599999983,
+    "2021": 359487.19999999984,
+    "2022": 1039064.0000000026,
+    "2023": 7117492.776000001,
+    "2024": 13119242.000000002,
+    "2025": 18699992.528,
+    "2026": 9932747.799999999
+  },
+  "year_2026": {
+    "closed_cycles": 6,
+    "completed_cycle_pnl": 9932747.799999999,
+    "high_date": "2026-09-10",
+    "high_equity": 56791379.6,
+    "low_date": "2026-03-13",
+    "low_equity": 44154899.6
+  },
+  "audit": {
+    "status": "pass",
+    "targeted_tests": 141,
+    "independent_assertions": 865801,
+    "equity_days": 1877,
+    "fills": 164,
+    "trades": 55
+  },
+  "research_flags": {
+    "future_anchor_cycles": 29,
+    "commission": 0.0,
+    "slippage": 0.0,
+    "source_quality": "PARTIAL"
+  },
+  "source_hashes": {
+    "run_manifest.json": "e60324fb0665575575f5ef9842f442fdc9da4a3803ceb111cf00c220b6062b6e",
+    "metrics.json": "c85d6491e2389f699b754506495a1d56801f949e57f37c7504b09a879a1cf8c4",
+    "additional_drawdowns.csv": "b487c4a496f8226079081bc1cc824958637d305dd2dd53d17b18a5ca71dd3ab9",
+    "equity_daily.csv": "3579c7034deb5250bb660fb98748ec16628969b3aee92e832414d0aad15ffc93",
+    "trades.csv": "4cf1061881a7d8d9708ee77d15eb8f911b1a371e697358a1297b53224b516fd5",
+    "audit.json": "fc7dc8206a7bd0a7e4e8d78bd95d8d72ba6256a74b0beadf7a8cb146e12e54bd",
+    "strategy_audit.json": "dd4c4996cd81b6c6ca315f3fbb9b891f88f1af9847c26ee4ae2e5604d8b4ac8e",
+    "test_summary.json": "ca69bf3ad63be61a333c9b80437197585ce777c5ef61773f048511158c1987f0"
+  }
+}

@@ -11,6 +11,9 @@ ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = [
     "index.html",
     "code.html",
+    "strat-076/index.html",
+    "strat-076/code.html",
+    "strat-076/reports/STRAT-032-v0.7.6-project-brief.pdf",
     "styles.css",
     "app.js",
     "README.md",
@@ -38,7 +41,7 @@ def main() -> int:
     for path in ROOT.rglob("*"):
         if not path.is_file() or ".git" in path.parts or ".qa" in path.parts:
             continue
-        if path == Path(__file__).resolve():
+        if path.name == "validate_publication.py" and "scripts" in path.parts:
             continue
         if path.suffix.lower() not in TEXT_SUFFIXES:
             continue

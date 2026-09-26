@@ -2,7 +2,7 @@
 
 ## Project purpose
 
-This repository is a public recruitment portfolio for the STRAT-026 v0.6.2 commodity-futures research project. It presents verified research results, methodology, selected code, and reproducibility boundaries without publishing private databases or the full proprietary strategy implementation.
+This repository is a public recruitment portfolio for audited commodity-futures strategy projects. The root site remains the STRAT-026 v0.6.2 case; `strat-076/` holds the separate STRAT-032 v0.7.6 case. Each page presents verified research results, methodology, selected code, and reproducibility boundaries without publishing private databases or the full proprietary strategy implementation.
 
 ## Directory contract
 
@@ -13,12 +13,13 @@ This repository is a public recruitment portfolio for the STRAT-026 v0.6.2 commo
 - `reports/`: downloadable recruiter-facing reports.
 - `docs/`: methodology and execution records.
 - `scripts/`: deterministic local build and validation helpers.
+- `strat-076/`: independent v0.7.6 page, code excerpt, data, PDF, methodology, and build helpers. Its own `AGENTS.md` defines the internal layout.
 - `.qa/`: generated local QA artifacts; never publish.
 
 ## Source boundary
 
-- Read-only source: the immutable STRAT-026 formal result package; its machine-local path is deliberately not recorded in this public repository.
-- Formal source run: `STRAT026-FULL-MAIN-20260912`.
+- Read-only sources: immutable STRAT-026 and STRAT-032 formal result packages; their machine-local paths are deliberately not recorded in this public repository.
+- Formal source runs: `STRAT026-FULL-MAIN-20260912` and `STRAT032-FULL-MAIN-20260926`.
 - Never modify or overwrite the source strategy project.
 - Do not publish raw databases, complete private rules, local absolute paths, credentials, full input snapshots, or private news data.
 

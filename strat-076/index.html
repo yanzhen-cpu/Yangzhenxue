@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="STRAT-032 v0.7.6：商品期货估值偏离、保证金风险控制与同手数换月的可审计研究回测。">
+  <meta name="theme-color" content="#07111f">
+  <title>0.7.6 换月策略｜羊振雪研究项目</title>
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要内容</a>
+  <header class="site-header">
+    <a class="brand" href="../index.html"><span class="brand-mark" aria-hidden="true">YZ</span><span>Yang Zhenxue · Research Portfolio</span></a>
+    <nav aria-label="页面导航">
+      <a href="#results">结果</a>
+      <a href="#system">系统</a>
+      <a href="#audit">审计</a>
+      <a href="#limits">边界</a>
+      <a href="../index.html">0.6.2</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero case-hero" id="top">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot"></span>STRAT-032 · v0.7.6 · AUDITED RESEARCH BACKTEST</p>
+        <h1>商品期货估值<br>与连续换月策略</h1>
+        <p class="lede">将估值偏离、动态保证金、交割月成交量门槛与同手数换月纳入同一事件状态机。信号筛选与持仓管理按顺序执行，换月后的策略状态和真实会计成本分别记账。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="reports/STRAT-032-v0.7.6-project-brief.pdf">下载项目简报</a>
+          <a class="button secondary" href="code.html">阅读Python源码节选</a>
+        </div>
+      </div>
+      <aside class="hero-proof" aria-label="正式运行信息">
+        <p class="proof-label">FORMAL RUN</p>
+        <p class="proof-id">STRAT032-FULL-<br>MAIN-20260926</p>
+        <dl>
+          <div><dt>区间</dt><dd>2019.01—2026.09</dd></div>
+          <div><dt>研究品种</dt><dd>34</dd></div>
+          <div><dt>权益交易日</dt><dd>1,877</dd></div>
+          <div><dt>独立审计</dt><dd class="pass">PASS</dd></div>
+        </dl>
+      </aside>
+    </section>
+
+    <section class="metrics" aria-label="回测核心指标">
+      <article><span>累计收益</span><strong>5,070.33%</strong><small>100万 → 5,170.33万</small></article>
+      <article><span>年化收益</span><strong>66.64%</strong><small>2019-01-02起</small></article>
+      <article><span>最大平仓回撤</span><strong>29.86%</strong><small>已实现权益口径</small></article>
+      <article><span>Sharpe</span><strong>1.66</strong><small>无风险利率0</small></article>
+      <article><span>闭环周期</span><strong>55</strong><small>期末空仓</small></article>
+      <article><span>实际换月</span><strong>10</strong><small>同手数风险复核</small></article>
+    </section>
+    <p class="metric-context">同一正式运行的<strong>普通最大回撤为46.20%</strong>、最大日终总毛保证金风险度为66.73%；胜率47.27%，平均盈亏比4.66。</p>
+
+    <section class="section" id="results">
+      <div class="section-heading">
+        <div><p class="kicker">01 · RESULTS</p><h2>完整区间的收益与风险路径</h2></div>
+        <p>主图为对数权益；附图使用同一百分比轴展示账户风险度、普通回撤、相对空窗回撤和平仓回撤。平仓回撤描述已实现权益，普通回撤反映日终盯市波动。</p>
+      </div>
+      <figure class="chart-card">
+        <img src="assets/equity_curve.svg" alt="2019年至2026年0.7.6策略的完整权益、账户风险度与三种回撤曲线">
+        <figcaption>正式运行 `STRAT032-FULL-MAIN-20260926`；2019-01-02至2026-09-24，期末权益5,170.33万元。</figcaption>
+      </figure>
+      <h3 class="year-heading">年度账户权益变化 <small>逐日盯市口径；2026年截至9月24日</small></h3>
+      <div class="year-grid" id="annual-grid" aria-label="年度账户权益变化"></div>
+      <p class="year-context" id="annual-context">年度账户数据加载中。</p>
+    </section>
+
+    <section class="section" id="system">
+      <div class="section-heading">
+        <div><p class="kicker">02 · SYSTEM</p><h2>从筛选、提保到连续换月</h2></div>
+        <p>0.7.6在前序策略上固定排除九个品种代码，普通开仓不依赖资讯；持仓仍由已生效的止损、提保减仓和交割前强退规则管理。</p>
+      </div>
+      <div class="pipeline" aria-label="策略状态流程">
+        <article><span>01</span><h3>数据快照</h3><p>活动合约行情、交割锚、方向保证金率、合约周期与公告可得时点。</p></article>
+        <article><span>02</span><h3>机会筛选</h3><p>估值偏离、交割月盘面成交量、固定代码排畸与候选合约排序。</p></article>
+        <article><span>03</span><h3>账户风控</h3><p>品种束冲突、单边与总毛风险预算，以及公告触发的提保减仓。</p></article>
+        <article><span>04</span><h3>生命周期换月</h3><p>到期前退出后，以已知价差设换月限价；同手数且重新核对资金与风险。</p></article>
+        <article><span>05</span><h3>双轨记账</h3><p>延续原策略时钟和保护阈值，同时按真实换月成交价记录新腿会计成本。</p></article>
+      </div>
+      <div class="code-panel">
+        <div>
+          <p class="kicker">FROZEN SOURCE EXCERPT</p>
+          <h3>公开真实增量模块</h3>
+          <p>展示0.7.6冻结源码中的固定代码筛选和状态机接入。它依赖未公开的前序引擎与数据适配器，属于可审阅源码节选。</p>
+          <a class="text-link" href="code.html">在网页中阅读两个Python文件 →</a>
+        </div>
+        <pre aria-label="固定代码筛选节选"><code>FIXED_EXCLUDED_PRODUCTS = frozenset({
+    "LC", "PD", "PS", "PT", "SI",
+    "MA", "SH", "UR", "AG"
+})
+
+def product_excluded(product, exchange_code=None):
+    return product in FIXED_EXCLUDED_PRODUCTS</code></pre>
+      </div>
+    </section>
+
+    <section class="section" id="audit">
+      <div class="section-heading">
+        <div><p class="kicker">03 · AUDIT</p><h2>正式结果经过独立重放</h2></div>
+        <p>源快照冻结后，短窗、完整历史、逐腿成交和逐日账户会计分别校验；报告与曲线来自同一正式运行。</p>
+      </div>
+      <div class="audit-grid">
+        <article><strong>141</strong><span>本轮专项测试</span><p>编译及定向测试通过，无失败。</p></article>
+        <article><strong>865,801</strong><span>独立审计断言</span><p>覆盖换月、减仓、成交、权益和风险。</p></article>
+        <article><strong>1,877</strong><span>日度权益复算</span><p>与冻结成交和持仓账本一致。</p></article>
+        <article><strong>164</strong><span>成交记录</span><p>55个完整周期、10次实际换月。</p></article>
+      </div>
+      <div class="evidence-list">
+        <div><span>规范身份</span><b>STRAT-032 · v0.7.6</b></div>
+        <div><span>正式运行</span><b>STRAT032-FULL-MAIN-20260926</b></div>
+        <div><span>独立复算</span><b>865,801条断言通过，错误0</b></div>
+        <div><span>交付审计</span><b>v6同源报告及16项必需产物通过</b></div>
+      </div>
+    </section>
+
+    <section class="section" id="limits">
+      <div class="section-heading">
+        <div><p class="kicker">04 · BOUNDARIES</p><h2>研究假设影响收益解释</h2></div>
+        <p>这些限制与绩效一起阅读，尤其是交割锚的当时可得性。0.7.6是一份按冻结假设复算的历史模拟。</p>
+      </div>
+      <div class="limits-grid">
+        <article><h3>未来锚标记</h3><p>55个周期中29个带有未来锚标记；部分历史交割月价的当时可知性未逐月独立证明。</p></article>
+        <article><h3>数据质量</h3><p>源快照质量标记为PARTIAL；缺失与推定政策在正式运行中留痕。</p></article>
+        <article><h3>成本假设</h3><p>手续费、滑点均为零，未验证真实成交冲击和市场容量。</p></article>
+        <article><h3>日频撮合</h3><p>日线高低价无法还原跨合约盘中先后，限价触达不等于真实成交。</p></article>
+        <article><h3>资金近似</h3><p>同一开盘批次按统一权益快照预算，不把未成交预算与日内释放资金反复分配。</p></article>
+        <article><h3>用途边界</h3><p>结果不构成实盘业绩、收益承诺或投资建议。</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div><strong>羊振雪</strong><span>Quantitative Research · AI Product · Backtesting Systems</span></div>
+    <div class="footer-links"><a href="../index.html">0.6.2项目</a><a href="code.html">Python节选</a><a href="docs/methodology.md">方法说明</a><a href="data/public-metrics.json">结构化指标</a><a href="https://github.com/yanzhen-cpu/Yangzhenxue">GitHub</a></div>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>

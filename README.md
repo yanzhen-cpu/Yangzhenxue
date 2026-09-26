@@ -4,6 +4,8 @@
 
 [在线项目页](https://yanzhen-cpu.github.io/Yangzhenxue/) · [网页阅读代码](https://yanzhen-cpu.github.io/Yangzhenxue/code.html) · [GitHub源码节选](src/strategy_pipeline.py) · [招聘版PDF](reports/STRAT-026-v0.6.2-project-brief.pdf)
 
+另一个独立案例：[0.7.6 商品期货连续换月策略](https://yanzhen-cpu.github.io/Yangzhenxue/strat-076/)。
+
 ## 核心结果
 
 | 指标 | 结果 |

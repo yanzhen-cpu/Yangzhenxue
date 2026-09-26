@@ -66,6 +66,8 @@ h1 { margin: 0; max-width: 14ch; font-size: clamp(3.3rem, 7.8vw, 6.6rem); line-h
 .hero-proof dt { color: var(--muted); }
 .hero-proof dd { margin: 0; font-weight: 700; }
 .pass { color: var(--accent); }
+.other-case { margin: -2rem 0 3.2rem; font-size: .9rem; }
+.other-case a { color: var(--accent-2); text-underline-offset: .25rem; }
 
 .metrics { display: grid; grid-template-columns: repeat(6, 1fr); margin-bottom: 7rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .metrics article { min-width: 0; padding: 1.25rem 1rem 1.25rem 0; }
