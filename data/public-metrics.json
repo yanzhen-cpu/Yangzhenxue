@@ -26,6 +26,15 @@
     "2025": 23078244.776,
     "2026": 0.0
   },
+  "year_2026": {
+    "closed_trades": 3,
+    "closed_pnl": 0.0,
+    "high_date": "2026-04-10",
+    "high_equity": 62764058.59199999,
+    "low_date": "2026-06-08",
+    "low_equity": 27435297.192000013,
+    "end_equity": 50302248.192
+  },
   "audit": {
     "status": "pass",
     "tests": 693,
@@ -48,6 +57,8 @@
     "audit.json": "3f3246fa38c9063e82e38779ce3ac46224dd5b0bcf2b3209cb50647ea4f95439",
     "strategy_audit.json": "f256a7f4901b3f956895c5099cb2cf4b17a052a13f60d3c3f573e96fc37ade40",
     "test_summary.json": "886446fef6a2092e6262b2c7682e3260e14dc2cd933caa4d8da001e6ce0df09e",
-    "run_manifest.json": "68077fa421319ad61870b28b73e772e0ae0fbaab4ed301919c2055557e6a2abe"
+    "run_manifest.json": "68077fa421319ad61870b28b73e772e0ae0fbaab4ed301919c2055557e6a2abe",
+    "equity_daily.csv": "09777fd3922793e02739a0f038f698fec3393f875d19a59ae27d45a1667be14f",
+    "trades.csv": "ee6156f18201177cef3edd0f5bc0bb968a0976f8e4c0d46c6fc4af4d48832ee6"
   }
 }
