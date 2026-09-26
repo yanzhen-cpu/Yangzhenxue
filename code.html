@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="STRAT-026 v0.6.2 公开Python架构节选。">
+  <title>Python代码节选｜STRAT-026 v0.6.2</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">YZ</span><span>返回项目首页</span></a>
+    <nav aria-label="代码页面导航"><a href="index.html#results">回测结果</a><a href="index.html#limits">研究边界</a></nav>
+  </header>
+  <main class="code-shell">
+    <div class="code-intro">
+      <p class="kicker">PUBLIC PYTHON EXCERPT · STRAT-026 v0.6.2</p>
+      <h1>公开代码节选</h1>
+      <p>以下代码展示偏离识别、合约择优、品种束风险门禁和账户保证金风险计算。它是可审阅的架构节选，完整回测引擎和私人数据适配器未公开。</p>
+      <div class="code-links">
+        <a href="https://github.com/yanzhen-cpu/Yangzhenxue/blob/main/src/strategy_pipeline.py">在GitHub查看源文件</a>
+        <a href="index.html">返回项目首页</a>
+      </div>
+    </div>
+    <pre class="code-view" aria-label="公开Python代码"><code>&quot;&quot;&quot;STRAT-026 v0.6.2 public architecture excerpt.
+
+This module demonstrates reviewable invariants from the research system. It is
+not the complete production backtest and deliberately excludes private data
+adapters, the full parameter set, and proprietary execution details.
+&quot;&quot;&quot;
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Iterable, Literal, Sequence
+
+Side = Literal[&quot;long&quot;, &quot;short&quot;]
+
+
+@dataclass(frozen=True)
+class ContractSnapshot:
+    instrument: str
+    product: str
+    close: float
+    delivery_anchor: float
+    margin_rate: float
+    months_to_delivery: int
+
+
+@dataclass(frozen=True)
+class Candidate:
+    instrument: str
+    product: str
+    side: Side
+    deviation_score: float
+    margin_rate: float
+
+
+@dataclass(frozen=True)
+class PositionRisk:
+    product: str
+    side: Side
+    margin: float
+    equity: float
+
+    @property
+    def risk_ratio(self) -&gt; float:
+        if self.equity &lt;= 0:
+            raise ValueError(&quot;equity must be positive&quot;)
+        return self.margin / self.equity
+
+
+def deviation_signal(snapshot: ContractSnapshot) -&gt; Side | None:
+    &quot;&quot;&quot;Map a sufficiently large futures-anchor deviation to a trade side.&quot;&quot;&quot;
+    if snapshot.close &lt;= 0 or snapshot.delivery_anchor &lt;= 0:
+        raise ValueError(&quot;prices must be positive&quot;)
+    if snapshot.margin_rate &lt;= 0:
+        raise ValueError(&quot;margin_rate must be positive&quot;)
+    if not 0 &lt;= snapshot.months_to_delivery &lt;= 6:
+        return None
+
+    gap = snapshot.close / snapshot.delivery_anchor - 1.0
+    threshold = 2.0 * snapshot.margin_rate
+    if gap &gt;= threshold:
+        return &quot;short&quot;
+    if gap &lt;= -threshold:
+        return &quot;long&quot;
+    return None
+
+
+def rank_candidate(snapshot: ContractSnapshot) -&gt; Candidate | None:
+    &quot;&quot;&quot;Build the product-level ranking score after the primary screen.&quot;&quot;&quot;
+    side = deviation_signal(snapshot)
+    if side is None or snapshot.months_to_delivery == 0:
+        return None
+    score = abs(snapshot.close - snapshot.delivery_anchor) / snapshot.months_to_delivery
+    return Candidate(
+        instrument=snapshot.instrument,
+        product=snapshot.product,
+        side=side,
+        deviation_score=score,
+        margin_rate=snapshot.margin_rate,
+    )
+
+
+def select_product_winners(snapshots: Iterable[ContractSnapshot]) -&gt; list[Candidate]:
+    &quot;&quot;&quot;Keep one deterministic maximum-score candidate for each product.&quot;&quot;&quot;
+    winners: dict[str, Candidate] = {}
+    for snapshot in snapshots:
+        candidate = rank_candidate(snapshot)
+        if candidate is None:
+            continue
+        current = winners.get(candidate.product)
+        if current is None or (
+            candidate.deviation_score,
+            candidate.instrument,
+        ) &gt; (
+            current.deviation_score,
+            current.instrument,
+        ):
+            winners[candidate.product] = candidate
+    return sorted(winners.values(), key=lambda item: (item.product, item.instrument))
+
+
+def account_risk(positions: Sequence[PositionRisk]) -&gt; dict[str, float]:
+    &quot;&quot;&quot;Return long, short, net-direction, and gross margin risk ratios.&quot;&quot;&quot;
+    if not positions:
+        return {&quot;long&quot;: 0.0, &quot;short&quot;: 0.0, &quot;net&quot;: 0.0, &quot;gross&quot;: 0.0}
+    equity = positions[0].equity
+    if equity &lt;= 0 or any(abs(position.equity - equity) &gt; 1e-8 for position in positions):
+        raise ValueError(&quot;all positions must share one positive account equity&quot;)
+
+    long_margin = sum(position.margin for position in positions if position.side == &quot;long&quot;)
+    short_margin = sum(position.margin for position in positions if position.side == &quot;short&quot;)
+    return {
+        &quot;long&quot;: long_margin / equity,
+        &quot;short&quot;: short_margin / equity,
+        &quot;net&quot;: abs(long_margin - short_margin) / equity,
+        &quot;gross&quot;: (long_margin + short_margin) / equity,
+    }
+
+
+def bundle_conflict(
+    candidate: Candidate,
+    held_positions: Sequence[PositionRisk],
+    product_bundles: dict[str, set[str]],
+    heavy_threshold: float,
+) -&gt; bool:
+    &quot;&quot;&quot;Reject same-side candidates sharing a bundle with a heavy position.&quot;&quot;&quot;
+    candidate_bundles = {
+        name for name, members in product_bundles.items() if candidate.product in members
+    }
+    if not candidate_bundles:
+        return False
+
+    for position in held_positions:
+        if position.side != candidate.side or position.risk_ratio &lt;= heavy_threshold:
+            continue
+        held_bundles = {
+            name for name, members in product_bundles.items() if position.product in members
+        }
+        if candidate_bundles &amp; held_bundles:
+            return True
+    return False
+</code></pre>
+  </main>
+</body>
+</html>
