@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="羊振雪的商品期货估值与风险控制系统项目：策略形式化、数据治理、回测引擎与独立审计。">
+  <meta name="theme-color" content="#07111f">
+  <title>羊振雪｜商品期货估值与风险控制系统</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳至主要内容</a>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="返回顶部">
+      <span class="brand-mark" aria-hidden="true">YZ</span>
+      <span>Yang Zhenxue · Research Portfolio</span>
+    </a>
+    <nav aria-label="页面导航">
+      <a href="#results">结果</a>
+      <a href="#system">系统</a>
+      <a href="#audit">审计</a>
+      <a href="#limits">边界</a>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="status-dot"></span>STRAT-026 · v0.6.2 · AUDITED RESEARCH BACKTEST</div>
+        <h1>商品期货估值<br>与风险控制系统</h1>
+        <p class="lede">从自然语言策略到可审计回测：覆盖34个非农商品品种，贯通交割估值、动态保证金、合约择优、事件执行和账户级风险约束。</p>
+        <div class="hero-actions">
+          <a class="button primary" href="reports/STRAT-026-v0.6.2-project-brief.pdf">下载项目简报</a>
+          <a class="button secondary" href="src/strategy_pipeline.py">查看代码节选</a>
+        </div>
+      </div>
+      <aside class="hero-proof" aria-label="项目验证信息">
+        <p class="proof-label">FORMAL RUN</p>
+        <p class="proof-id">STRAT026-FULL-<br>MAIN-20260912</p>
+        <dl>
+          <div><dt>数据区间</dt><dd>2021.01—2026.08</dd></div>
+          <div><dt>交易品种</dt><dd>34</dd></div>
+          <div><dt>账户交易日</dt><dd>1,356</dd></div>
+          <div><dt>审计状态</dt><dd class="pass">PASS</dd></div>
+        </dl>
+      </aside>
+    </section>
+
+    <section class="metrics" aria-label="核心指标">
+      <article><span>累计收益</span><strong>4,930.22%</strong><small>100万 → 5,030.22万</small></article>
+      <article><span>年化收益</span><strong>101.61%</strong><small>2021-01-04起</small></article>
+      <article><span>最大平仓回撤</span><strong>19.63%</strong><small>已实现权益口径</small></article>
+      <article><span>Sharpe</span><strong>1.52</strong><small>无风险利率0</small></article>
+      <article><span>闭环交易</span><strong>32</strong><small>期末无未平仓</small></article>
+      <article><span>盈亏比</span><strong>4.33</strong><small>胜率46.88%</small></article>
+    </section>
+
+    <section class="section chart-section" id="results">
+      <div class="section-heading">
+        <div><p class="kicker">01 · RESULTS</p><h2>结果必须和风险一起看</h2></div>
+        <p>上图为对数权益；下图把账户风险度、普通回撤、相对空窗回撤和平仓回撤放在同一百分比轴中。高收益伴随显著路径风险，最大普通回撤为56.29%。</p>
+      </div>
+      <figure class="chart-card">
+        <img src="assets/equity_curve.svg" alt="2021年至2026年策略权益、账户风险度和三类回撤曲线">
+        <figcaption>正式运行的完整区间曲线。期末权益5030.22万元，最大账户风险度92.74%。</figcaption>
+      </figure>
+      <div class="year-grid" id="year-grid" aria-label="分年度已实现盈亏"></div>
+    </section>
+
+    <section class="section" id="system">
+      <div class="section-heading">
+        <div><p class="kicker">02 · SYSTEM</p><h2>把策略规则变成有序状态机</h2></div>
+        <p>所有新开仓严格经过筛选层，再进入执行层；平仓拥有独立优先级。每次事件都保留来源日期、使用的保证金率、目标价和禁仓状态。</p>
+      </div>
+      <div class="pipeline" aria-label="策略执行流程">
+        <article><span>01</span><h3>数据快照</h3><p>行情、交割锚、动态保证金、合约周期、品级和资讯可得性。</p></article>
+        <article><span>02</span><h3>筛选与择优</h3><p>成熟度、交割标准、估值下沿、偏离阈值、资讯和时间条件。</p></article>
+        <article><span>03</span><h3>组合风控</h3><p>品种束冲突、方向风险、总风险和对冲优先级统一预算。</p></article>
+        <article><span>04</span><h3>事件执行</h3><p>限价续挂、一次加仓、分阶段退出、禁仓和临近交割强退。</p></article>
+        <article><span>05</span><h3>会计与审计</h3><p>逐笔成交、逐日盯市、保证金占用、权益回放和异常检查。</p></article>
+      </div>
+      <div class="code-panel">
+        <div>
+          <p class="kicker">PUBLIC CODE EXCERPT</p>
+          <h3>公开的是关键不变式，不是私人数据库</h3>
+          <p>代码节选展示偏离识别、同品种择优、品种束风险门禁和组合风险计算。完整策略的全部参数组合、数据适配器和历史数据库不公开。</p>
+          <a class="text-link" href="src/strategy_pipeline.py">打开 strategy_pipeline.py →</a>
+        </div>
+        <pre aria-label="Python代码节选"><code>def deviation_signal(close, anchor, margin_rate):
+    gap = close / anchor - 1.0
+    threshold = 2.0 * margin_rate
+    if gap &gt;= threshold:
+        return "short"
+    if gap &lt;= -threshold:
+        return "long"
+    return None
+
+def gross_risk(long_margin, short_margin, equity):
+    return (long_margin + short_margin) / equity</code></pre>
+      </div>
+    </section>
+
+    <section class="section audit-section" id="audit">
+      <div class="section-heading">
+        <div><p class="kicker">03 · AUDIT</p><h2>回测结果能够逐层复算</h2></div>
+        <p>最终报告不是单一脚本的输出。正式晋级前，规则、订单、成交、持仓、保证金、权益和退出原因分别接受验证。</p>
+      </div>
+      <div class="audit-grid">
+        <article><strong>693</strong><span>自动化测试</span><p>包含真实短窗和完整历史运行。</p></article>
+        <article><strong>95,686</strong><span>独立审计断言</span><p>覆盖筛选、手数、风险、成交与退出。</p></article>
+        <article><strong>1,356</strong><span>日度权益复算</span><p>全部交易日逐日重放账户会计。</p></article>
+        <article><strong>69</strong><span>成交记录检查</span><p>价格范围、数量、成本和保证金一致。</p></article>
+      </div>
+      <div class="evidence-list">
+        <div><span>数据完整性</span><b>正式快照哈希冻结</b></div>
+        <div><span>策略一致性</span><b>32笔周期逐笔回放</b></div>
+        <div><span>账户会计</span><b>期末权益与成交复算一致</b></div>
+        <div><span>输出完整性</span><b>16项必需产物全部通过</b></div>
+      </div>
+    </section>
+
+    <section class="section limits-section" id="limits">
+      <div class="section-heading">
+        <div><p class="kicker">04 · BOUNDARIES</p><h2>限制条件与结果同时披露</h2></div>
+        <p>这是一项研究工程成果。下面这些假设会影响收益解释，也是从回测走向实盘前必须继续验证的部分。</p>
+      </div>
+      <div class="limits-grid">
+        <article><h3>成本口径</h3><p>手续费与滑点均为零，未做成交冲击和容量压力测试。</p></article>
+        <article><h3>日频撮合</h3><p>阈值在日线高低价范围内视为触达；无法还原真实盘中先后路径。</p></article>
+        <article><h3>权益近似</h3><p>同一开盘批次使用统一权益快照分配预算，不模拟订单级资金回流。</p></article>
+        <article><h3>交割估值</h3><p>部分月份采用经确认的研究型交割锚算法，不标作官方最终交割价。</p></article>
+        <article><h3>数据质量</h3><p>缺失候选字段时跳过，持仓关键字段缺失时终止，不制造OHLC成交价。</p></article>
+        <article><h3>用途边界</h3><p>历史回测不构成实盘业绩、收益承诺或投资建议。</p></article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div><strong>羊振雪</strong><span>Quantitative Research · AI Product · Backtesting Systems</span></div>
+    <div class="footer-links"><a href="docs/methodology.md">方法说明</a><a href="data/public-metrics.json">结构化指标</a><a href="https://github.com/yanzhen-cpu/Yangzhenxue">GitHub</a></div>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>
