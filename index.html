@@ -31,7 +31,7 @@
         <p class="lede">从自然语言策略到可审计回测：覆盖34个非农商品品种，贯通交割估值、动态保证金、合约择优、事件执行和账户级风险约束。</p>
         <div class="hero-actions">
           <a class="button primary" href="reports/STRAT-026-v0.6.2-project-brief.pdf">下载项目简报</a>
-          <a class="button secondary" href="src/strategy_pipeline.py">查看代码节选</a>
+          <a class="button secondary" href="code.html">阅读Python代码节选</a>
         </div>
       </div>
       <aside class="hero-proof" aria-label="项目验证信息">
@@ -64,7 +64,9 @@
         <img src="assets/equity_curve.svg" alt="2021年至2026年策略权益、账户风险度和三类回撤曲线">
         <figcaption>正式运行的完整区间曲线。期末权益5030.22万元，最大账户风险度92.74%。</figcaption>
       </figure>
+      <h3 class="year-heading">分年度已实现盈亏 <small>按平仓年度归属，单位：万元</small></h3>
       <div class="year-grid" id="year-grid" aria-label="分年度已实现盈亏"></div>
+      <p class="year-context" id="year-context">2026年交易和持仓波动数据加载中。</p>
     </section>
 
     <section class="section" id="system">
@@ -84,7 +86,7 @@
           <p class="kicker">PUBLIC CODE EXCERPT</p>
           <h3>公开的是关键不变式，不是私人数据库</h3>
           <p>代码节选展示偏离识别、同品种择优、品种束风险门禁和组合风险计算。完整策略的全部参数组合、数据适配器和历史数据库不公开。</p>
-          <a class="text-link" href="src/strategy_pipeline.py">打开 strategy_pipeline.py →</a>
+          <a class="text-link" href="code.html">在网页中阅读公开代码节选 →</a>
         </div>
         <pre aria-label="Python代码节选"><code>def deviation_signal(close, anchor, margin_rate):
     gap = close / anchor - 1.0
