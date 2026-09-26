@@ -6,6 +6,7 @@ import argparse
 import csv
 import hashlib
 import json
+from collections import defaultdict
 from pathlib import Path
 
 
@@ -41,6 +42,21 @@ def main() -> None:
     with drawdowns_path.open(encoding="utf-8-sig", newline="") as stream:
         drawdown_rows = list(csv.DictReader(stream))
     max_closed = max(float(row["realized_drawdown"]) for row in drawdown_rows)
+    with (args.source_run / "equity_daily.csv").open(encoding="utf-8-sig", newline="") as stream:
+        year_2026_rows = [row for row in csv.DictReader(stream) if row["trade_date"].startswith("2026-")]
+    with (args.source_run / "trades.csv").open(encoding="utf-8-sig", newline="") as stream:
+        trades = list(csv.DictReader(stream))
+    year_2026_trades = [row for row in trades if row["exit_date"].startswith("2026-")]
+    if not year_2026_rows or not year_2026_trades:
+        raise ValueError("2026 evidence is missing")
+    pnl_by_exit_year: dict[str, float] = defaultdict(float)
+    for trade in trades:
+        pnl_by_exit_year[trade["exit_date"][:4]] += float(trade["net_pnl"])
+    for year, values in metrics["by_year"].items():
+        if abs(pnl_by_exit_year[year] - values["net_pnl"]) > 0.01:
+            raise ValueError(f"yearly realized PnL mismatch: {year}")
+    low_2026 = min(year_2026_rows, key=lambda row: float(row["equity"]))
+    high_2026 = max(year_2026_rows, key=lambda row: float(row["equity"]))
 
     public = {
         "strategy": "STRAT-026",
@@ -64,6 +80,15 @@ def main() -> None:
         "approved_products": metrics["approved_product_count"],
         "yearly_realized_pnl": {
             year: values["net_pnl"] for year, values in metrics["by_year"].items()
+        },
+        "year_2026": {
+            "closed_trades": len(year_2026_trades),
+            "closed_pnl": sum(float(row["net_pnl"]) for row in year_2026_trades),
+            "high_date": high_2026["trade_date"],
+            "high_equity": float(high_2026["equity"]),
+            "low_date": low_2026["trade_date"],
+            "low_equity": float(low_2026["equity"]),
+            "end_equity": float(year_2026_rows[-1]["equity"]),
         },
         "audit": {
             "status": audit["status"],
@@ -89,6 +114,8 @@ def main() -> None:
             "strategy_audit.json": sha256(strategy_audit_path),
             "test_summary.json": sha256(tests_path),
             "run_manifest.json": sha256(run_manifest_path),
+            "equity_daily.csv": sha256(args.source_run / "equity_daily.csv"),
+            "trades.csv": sha256(args.source_run / "trades.csv"),
         },
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
