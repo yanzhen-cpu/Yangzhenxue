@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = [
     "index.html",
+    "code.html",
     "styles.css",
     "app.js",
     "README.md",
@@ -66,6 +67,14 @@ def main() -> int:
                 errors.append(f"metric_mismatch:{key}")
         if abs(data.get("max_closed_drawdown", 0) - 0.1963260000000001) > 1e-12:
             errors.append("metric_mismatch:max_closed_drawdown")
+        year = data.get("year_2026", {})
+        if year.get("closed_trades") != 3 or year.get("closed_pnl") != 0:
+            errors.append("metric_mismatch:year_2026_closed_trades")
+        if not (year.get("low_equity", float("inf")) < year.get("end_equity", 0) < year.get("high_equity", 0)):
+            errors.append("metric_mismatch:year_2026_equity_range")
+    code_page = ROOT / "code.html"
+    if code_page.is_file() and "def deviation_signal" not in code_page.read_text(encoding="utf-8"):
+        errors.append("code_page_missing_source")
 
     if errors:
         for error in errors:
